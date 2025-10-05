@@ -4,14 +4,17 @@ import QuizPage from "./pages/QuizPage";
 import ResultPage from "./pages/ResultPage";
 
 export default function App() {
-  const [page, setPage] = useState("login"); // Tracks current page
+  const [page, setPage] = useState("login");
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState(null);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+
   useEffect(() => {
     if (page === "quiz") {
-      fetch("https://quiz-backend-zwk7.onrender.com")
+      fetch(`${BACKEND_URL}/api/quiz`)
         .then((res) => res.json())
         .then((data) => setQuestions(data))
         .catch((err) => console.error("Error fetching quiz:", err));
@@ -19,13 +22,13 @@ export default function App() {
   }, [page]);
 
   const handleStartQuiz = () => {
-    setAnswers({}); // Clear old answers
+    setAnswers({});
     setResults(null);
     setPage("quiz");
   };
 
   const handleSubmitQuiz = (answers) => {
-    fetch("https://quiz-backend-zwk7.onrender.com", {
+    fetch(`${BACKEND_URL}/api/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers }),
